@@ -23,7 +23,6 @@ export default function InvestmentDetail({
     dividendYield,
 }: InvestmentDetailProps) {
   const [open, setOpen] = useState(false);
-  console.log(open);
   return (
     <main>
       <h1 className="text-3xl font-bold">
