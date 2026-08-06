@@ -1,8 +1,14 @@
+export type TransactionAction = "BUY" | "SELL";
+
 export interface Transaction {
-  id: number
-  assetCode: string;
-  date: string; 
-  price: number;
+  id: string;
+  assetId: string;
+  date: string;
+  action: TransactionAction;
   shares: number;
-  amount: number;
+  price: number;
+  fee: number;
+  tax: number;
+  note: string;
+  createdAt: string;
 }
