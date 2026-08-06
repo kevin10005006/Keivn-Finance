@@ -7,10 +7,13 @@ import FormField from "@/components/ui/form/FormField";
 import { useAssets } from "@/hooks/useAssets";
 import { useTransactions } from "@/hooks/useTransactions";
 import { calculatePosition } from "@/lib/transactions/services/positionService";
+import { useDividends } from "@/hooks/useDividends";
+import { createDividend } from "@/lib/dividends/services/dividendService";
 
 export default function DividendForm() {
  const { assets } = useAssets();
  const { transactions } = useTransactions();
+ const { dividends, setDividends } = useDividends();
 
  const [assetId, setAssetId] = useState("");
  const [exDividendDate, setExDividendDate] = useState("");
@@ -19,6 +22,7 @@ export default function DividendForm() {
    useState("");
  const [shares, setShares] = useState("");
  const [note, setNote] = useState("");
+ const [error, setError] = useState("");
 
  const activeAssets = useMemo(() => {
    return assets
@@ -62,11 +66,51 @@ export default function DividendForm() {
    );
  }
 
+ function handleSubmit() {
+    setError("");
+
+    const result = createDividend({
+        assetId,
+        exDividendDate,
+        paymentDate,
+        dividendPerShare: Number(dividendPerShare),
+        shares: Number(shares),
+        withholdingTax: 0,
+        handlingFee: 0,
+        note,
+    });
+
+    if (!result.success || !result.dividend) {
+        setError(
+            result.error ?? "建立配息紀錄時發生未知錯誤"
+        );
+        return;
+    }
+
+    setDividends([
+        ...dividends,
+        result.dividend,
+    ]);
+
+    setAssetId("");
+    setExDividendDate("");
+    setPaymentDate("");
+    setDividendPerShare("");
+    setShares("");
+    setNote("");
+ }
+
  return (
    <Panel className="mt-6">
      <h2 className="text-2xl font-bold">
        新增配息紀錄
      </h2>
+     
+     {error && (
+        <div className="mt-4 rounded-md border border-red-400 bg-red-100 px-4 py-3 text-red-700">
+            {error}
+        </div>
+     )}
 
      <div className="mt-6 space-y-6">
        <FormField label="商品" required>
@@ -170,6 +214,7 @@ export default function DividendForm() {
        <div className="flex justify-end">
          <button
            type="button"
+           onClick={handleSubmit}
            className="rounded-md bg-blue-600 px-6 py-2 text-white hover:bg-blue-700"
          >
            新增配息

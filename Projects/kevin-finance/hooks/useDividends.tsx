@@ -25,7 +25,7 @@ export function DividendProvider({
 }: {
  children: ReactNode;
 }) {
- const [dividends, setDividends] = useState(getAllDividends());
+ const [dividends, setDividends] = useState<Dividend[]>(getAllDividends());
 
  const value = useMemo(
    () => ({
