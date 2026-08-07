@@ -11,6 +11,8 @@ export default function DividendTable() {
  const { dividends, setDividends } = useDividends();
  const [editingDividendId, setEditingDividendId] =
     useState<string | null>(null);
+ const [deletingDividendId, setDeletingDividendId] =
+    useState<string | null>(null);
 
  function getAsset(assetId: string) {
    return assets.find((asset) => asset.id === assetId);
@@ -48,8 +50,8 @@ const sortedDividends = dividends
       {editingDividendId && (() => {
         const editingDividend = dividends.find(
           (dividend) => dividend.id === editingDividendId
-        );
-        
+        );      
+
         if (!editingDividend) {
           return null;
         }
@@ -180,6 +182,52 @@ const sortedDividends = dividends
                       >
                         編輯
                       </button>
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setDeletingDividendId(dividend.id)
+                        }
+                        className="rounded-md border border-red-300 px-3 py-1 text-sm text-red-600 hover:gb-red-50"
+                      >
+                        刪除
+                      </button>
+
+                      {deletingDividendId === dividend.id && (
+                        <div className="flex item-center gap-2">
+                          <span className="text-sm text-red-600">
+                            確定刪除?
+                          </span>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setDividends((currentDividends) =>
+                                currentDividends.filter(
+                                  (item) => item.id !== dividend.id
+                                )
+                              );
+
+                              setDeletingDividendId(null);
+
+                              if (editingDividendId === dividend.id) {
+                                setEditingDividendId(null);
+                              }
+                            }}
+                            className="rounded-md bg-red-600 px-2 py-1 text-sm text-white"
+                          >
+                            確定
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setDeletingDividendId(null)}
+                            className="rounded-md border px-2 py-1 text-sm"
+                          >
+                            取消
+                          </button>
+                        </div>
+                      )}
                    </td>
                  </tr>
                );
