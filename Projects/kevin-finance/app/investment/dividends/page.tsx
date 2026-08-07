@@ -2,6 +2,7 @@
 
 import DividendForm from "@/components/dividend/DividendForm";
 import DividendTable from "@/components/dividend/DividendTable";
+import DividendSummaryCards from "@/components/dividend/DividendSummaryCards";
 
 export default function DividendsPage() {
     return (
@@ -14,6 +15,7 @@ export default function DividendsPage() {
                 管理 ETF 與股票的配息紀錄
             </p>
 
+            <DividendSummaryCards />
             <DividendForm />
             <DividendTable />
         </main>

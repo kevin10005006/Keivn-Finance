@@ -3,6 +3,7 @@
 import DashboardRecentTransactions from "@/components/dashboard/DashboardRecentTransactions";
 import DashboardPositionTable from "@/components/dashboard/DashboardPositionTable";
 import DashboardSummaryCards from "@/components/dashboard/DashboardSummaryCards";
+import DashboardDividendSummary from "@/components/dividend/DashboardDividendSummary";
 
 export default function dashboardPage() {
     return (
@@ -16,6 +17,8 @@ export default function dashboardPage() {
             </p>
 
             <DashboardSummaryCards />
+
+            <DashboardDividendSummary />
 
             <DashboardPositionTable />
 

@@ -32,3 +32,75 @@ export function calculateDividendSummary(
           totalHandlingFee, 
     };
 }
+
+export function getTotalDividend(
+ dividends: Dividend[]
+): number {
+ return dividends.reduce(
+   (sum, dividend) => sum + (dividend.totalDividend ?? 0),
+   0
+ );
+}
+
+export function getYearDividend(
+ dividends: Dividend[],
+ year: number
+): number {
+ return dividends
+   .filter((dividend) => {
+     if (!dividend.paymentDate) {
+       return false;
+     }
+
+     return dividend.paymentDate.startsWith(
+       `${year}-`
+     );
+   })
+   .reduce(
+     (sum, dividend) =>
+       sum + (dividend.totalDividend ?? 0),
+     0
+   );
+}
+
+export function getMonthDividend(
+ dividends: Dividend[],
+ year: number,
+ month: number
+): number {
+ const yearMonth =
+   `${year}-${String(month).padStart(2, "0")}`;
+
+ return dividends
+   .filter((dividend) => {
+     if (!dividend.paymentDate) {
+       return false;
+     }
+
+     return dividend.paymentDate.startsWith(
+       `${yearMonth}-`
+     );
+   })
+   .reduce(
+     (sum, dividend) =>
+       sum + (dividend.totalDividend ?? 0),
+     0
+   );
+}
+
+export function getAverageMonthlyDividend(
+    dividends: Dividend[],
+    year: number,
+    throughMonth: number
+): number {
+    if (throughMonth <= 0) {
+        return 0;
+    }
+
+    const yearDividend = getYearDividend(
+        dividends,
+        year
+    );
+
+    return yearDividend / throughMonth;
+}
