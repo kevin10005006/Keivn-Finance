@@ -15,7 +15,7 @@ export interface Dividend {
     assetId: string;
     exDividendDate: string;
     paymentDate: string;
-    dividendPerShares: number;
+    dividendPerShare: number;
     shares: number;
     totalDividend: number;
     withholdingTax: number;

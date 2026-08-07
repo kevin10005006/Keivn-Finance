@@ -1,3 +1,3 @@
-import { Transaction } from "@/types/transaction";
+import { Transaction } from "@/types/Transaction";
 
 export const transactions: Transaction[] = [];

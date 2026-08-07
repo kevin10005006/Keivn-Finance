@@ -1,12 +1,16 @@
 "use client";
 
 import Panel from "@/components/ui/Panel";
+import DividendEditForm from "@/components/dividend/DividendEditForm";
 import { useAssets } from "@/hooks/useAssets";
 import { useDividends } from "@/hooks/useDividends";
+import { useState } from "react";
 
 export default function DividendTable() {
  const { assets } = useAssets();
- const { dividends } = useDividends();
+ const { dividends, setDividends } = useDividends();
+ const [editingDividendId, setEditingDividendId] =
+    useState<string | null>(null);
 
  function getAsset(assetId: string) {
    return assets.find((asset) => asset.id === assetId);
@@ -40,6 +44,34 @@ const sortedDividends = dividends
      <h2 className="text-2xl font-bold">
        配息紀錄
      </h2>
+
+      {editingDividendId && (() => {
+        const editingDividend = dividends.find(
+          (dividend) => dividend.id === editingDividendId
+        );
+        
+        if (!editingDividend) {
+          return null;
+        }
+
+        return (
+          <DividendEditForm
+            dividend={editingDividend}
+            onCancel={() => setEditingDividendId(null)}
+            onSave={(updateDividend) => {
+              setDividends((currentDividends) => 
+                currentDividends.map((item) =>
+                  item.id === updateDividend.id
+                    ? updateDividend
+                    : item
+                )
+              );
+
+              setEditingDividendId(null);
+            }}
+          />
+        );
+      })()}
 
      {sortedDividends.length === 0 ? (
        <p className="mt-6 text-center text-gray-500">
@@ -77,6 +109,10 @@ const sortedDividends = dividends
                <th className="px-4 py-3 text-center">
                  狀態
                </th>
+
+               <th className="px-4 py-3 text-center">
+                 操作
+               </th>
              </tr>
            </thead>
 
@@ -108,7 +144,7 @@ const sortedDividends = dividends
                    </td>
 
                    <td className="px-4 py-3 text-right">
-                     {dividend.dividendPerShare.toLocaleString(
+                     {Number(dividend.dividendPerShare ?? 0).toLocaleString(
                        undefined,
                        {
                          maximumFractionDigits: 4,
@@ -117,12 +153,12 @@ const sortedDividends = dividends
                    </td>
 
                    <td className="px-4 py-3 text-right">
-                     {dividend.shares.toLocaleString()}
+                     {Number(dividend.shares ?? 0).toLocaleString()}
                    </td>
 
                    <td className="px-4 py-3 text-right font-semibold">
                      NT${" "}
-                     {dividend.totalDividend.toLocaleString(
+                     {Number(dividend.totalDividend ?? 0).toLocaleString(
                        undefined,
                        {
                          maximumFractionDigits: 2,
@@ -132,6 +168,18 @@ const sortedDividends = dividends
 
                    <td className="px-4 py-3 text-center">
                      {dividend.status}
+                   </td>
+
+                   <td className="px-4 py-3 text-center">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setEditingDividendId(dividend.id)
+                        }
+                        className="rounded-md border px-3 py-1 text-sm hover:bg-gray-50"
+                      >
+                        編輯
+                      </button>
                    </td>
                  </tr>
                );

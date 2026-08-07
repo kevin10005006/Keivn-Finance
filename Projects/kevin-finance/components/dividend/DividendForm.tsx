@@ -87,10 +87,16 @@ export default function DividendForm() {
         return;
     }
 
-    setDividends([
-        ...dividends,
-        result.dividend,
-    ]);
+    const newDividend = result.dividend;
+
+    setDividends((currentDividends) => {
+      const nextDividends = [
+        ...currentDividends,
+        newDividend,
+      ];
+
+      return nextDividends;
+    })
 
     setAssetId("");
     setExDividendDate("");
