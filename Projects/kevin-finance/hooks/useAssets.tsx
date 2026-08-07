@@ -3,13 +3,13 @@
 import {
  createContext,
  useContext,
+ useEffect,
  useMemo,
  useState,
  ReactNode,
 } from "react";
 
 import { Asset } from "@/types/Asset";
-import { getAllAssets } from "@/lib/assets/services/assetService";
 
 interface AssetContextType {
  assets: Asset[];
@@ -25,7 +25,27 @@ export function AssetProvider({
 }: {
  children: ReactNode;
 }) {
- const [assets, setAssets] = useState<Asset[]>(getAllAssets());
+ const [assets, setAssets] = useState<Asset[]>([]);
+
+ useEffect(() => {
+  async function loadAssets() {
+    try {
+      const response = await fetch("/api/assets");
+
+      if (!response.ok) {
+        throw new Error("讀取商品資料失敗");
+      }
+
+      const result = await response.json();
+
+      setAssets(result.assets ?? []);
+    } catch (error) {
+      console.error("Load assets failed:", error);
+    }
+  }
+
+  loadAssets();
+ }, []);
 
  const value = useMemo(
    () => ({

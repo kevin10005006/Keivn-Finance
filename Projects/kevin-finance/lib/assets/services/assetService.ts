@@ -65,3 +65,48 @@ export function createAsset(
         asset,
     };
 }
+
+export interface UpdateAssetInput {
+ name?: string;
+ type?: AssetType;
+ market?: string;
+ isActive?: boolean;
+}
+
+export interface UpdateAssetResult {
+ asset?: Asset;
+ error?: string;
+}
+
+export async function updateAsset(
+ id: string,
+ data: UpdateAssetInput
+): Promise<UpdateAssetResult> {
+ try {
+   const response = await fetch(`/api/assets/${id}`, {
+     method: "PATCH",
+     headers: {
+       "Content-Type": "application/json",
+     },
+     body: JSON.stringify(data),
+   });
+
+   const result = await response.json();
+
+   if (!response.ok || !result.success) {
+     return {
+       error: result.error ?? "修改商品失敗",
+     };
+   }
+
+   return {
+     asset: result.asset,
+   };
+ } catch (error) {
+   console.error("updateAsset failed:", error);
+
+   return {
+     error: "無法連線至伺服器",
+   };
+ }
+}

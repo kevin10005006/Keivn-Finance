@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { AssetType } from "@/types/Asset";
 import { useAssets } from "@/hooks/useAssets";
-import { createAsset } from "@/lib/assets/services/assetService";
 
 export default function AssetForm() {
  const [code, setCode] = useState("");
@@ -13,33 +12,46 @@ export default function AssetForm() {
 
  const { assets, setAssets } = useAssets(); 
 
- function handleSubmit() {
+ async function handleSubmit() {
    setError("");
 
-   const result = createAsset(
-    assets,
-    code, 
-    name, 
-    type as AssetType, 
-    market
-  );
+    try {
+      const response = await fetch("/api/assets", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code,
+          name,
+          type: type as AssetType,
+          market,
+        }),
+      });
 
-   if (result.error) {
-     setError(result.error);
-     return;
-   }
+      const result = await response.json();
 
-   if (!result.asset) {
-     setError("建立商品時發生未知錯誤");
-     return;
-   }
+      if (!response.ok || !result.success) {
+        setError(
+          result.error ?? "建立商品時發生未知錯誤"
+        );
+        return;
+      }
 
-    setAssets([...assets, result.asset]);
+      setAssets((currentAssets) => [
+        ...currentAssets,
+        result.asset,
+      ]);
 
-    setCode("");
-    setName("");
-    setType("ETF");
-    setMarket("TWSE");
+      setCode("");
+      setName("");
+      setType("ETF");
+      setMarket("TWSE");
+    } catch (error) {
+      console.error("Create asset failed:", error);
+
+      setError("建立商品時發生連線錯誤");
+    }
  }
 
  return (

@@ -9,7 +9,7 @@ export type DividendSource =
   | "CSV"
   | "BROKER"
   | "API"
-
+  
 export interface Dividend {
     id: string;
     assetId: string;
